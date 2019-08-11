@@ -13,12 +13,12 @@ class CodeBuilder:
         self.code.extend(['' * self.indent_level, line, '\n'])
 
     def add_section(self):
-        """Will append a new line when done"""
+        """Will append a new line at the end of the section"""
         s = CodeBuilder(self.indent_level)
         self.code.append(s)
         return s
 
-    # I respect PEP-8
+    # respect PEP-8
     INDENT_STEP = 4
 
     def indent(self):
@@ -28,6 +28,7 @@ class CodeBuilder:
         self.indent_level -= self.INDENT_STEP
 
     def get_globals(self):
+        """Get the result of compilation"""
         assert self.indent_level == self.init_indent
         source = str(self)
         result = {}
