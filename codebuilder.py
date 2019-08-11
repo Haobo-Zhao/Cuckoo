@@ -10,7 +10,7 @@ class CodeBuilder(object):
         return ''.join(str(line) for line in self.code)
 
     def add_line(self, line):
-        self.code.extend(['' * self.indent_level, line, '\n'])
+        self.code.extend([' ' * self.indent_level, line, '\n'])
 
     def add_section(self):
         """Will append a new line at the end of the section"""

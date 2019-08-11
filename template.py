@@ -1,10 +1,12 @@
 import re
 
-import codebuilder
+import pprint
+
+from codebuilder import CodeBuilder
 
 
 class Template(object):
-    """Mimicking some of Django syntax.
+    """Mimicking a subset of Django's syntax.
     contexts are dicts
     """
     def __init__(self, template, *contexts):
@@ -16,11 +18,11 @@ class Template(object):
         self.all_vars = set()
         self.loop_vars = set()
 
-        code = codebuilder.CodeBuilder()
+        code = CodeBuilder()
         code.add_line('def _render(context, dot_handler):')
         code.indent()
-        # this section will be completed when all vars are known in the template
-        vars = code.add_section()
+        # this section will be completed when all vars in the template are known
+        # variables = code.add_section()
         code.add_line('result = []')
         code.add_line('append_result = result.append')
         code.add_line('extend_result = result.extend')
@@ -30,16 +32,14 @@ class Template(object):
 
         def flush_output():
             """Batching lines of code"""
-            if len(buffered) == 1:
-                code.add_line("append_result(%s)" % buffered[0])
-            elif len(buffered) > 1:
-                code.add_line("extend_result([%s])" % ", ".join(buffered))
-            del buffered[:]
+            if buffered:
+                code.add_line('extend_result([{0}])'.format(", ".join(buffered)))
+                del buffered[:]
 
         # split the template into literals,
         # {{ expression }}, {# comment #} and {% `if` or `for` statement %}
         tokens = re.split(r'(?s)({{.*?}}|{%.*?%}|{#.*?#})', template)
-
+        # pprint.pprint(tokens)
         for token in tokens:
             if token.startswith('{#'):
                 # Simply move on when encountering comments
@@ -53,8 +53,8 @@ class Template(object):
         flush_output()
 
         # Complete the variables section now that all vars are known
-        for var_name in (self.all_vars - self.loop_vars):
-            vars.add_line("c_{0} = context[{1}]".format(var_name, var_name))
+        # for var in (self.all_vars - self.loop_vars):
+        #     variables.add_line("c_{0} = context[{1}]".format(var, var))
 
         code.add_line("return ''.join(result)")
         code.dedent()
