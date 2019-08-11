@@ -1,4 +1,4 @@
-class CodeBuilder:
+class CodeBuilder(object):
     """Helper class for building source code"""
 
     def __init__(self, indent=0):
@@ -28,9 +28,9 @@ class CodeBuilder:
         self.indent_level -= self.INDENT_STEP
 
     def get_globals(self):
-        """Get the result of compilation"""
+        """Get the globals of compilation"""
         assert self.indent_level == self.init_indent
         source = str(self)
-        result = {}
-        exec(source, result)
-        return result
+        g = {}
+        exec(source, g)
+        return g
