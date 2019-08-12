@@ -1,4 +1,4 @@
-# Cuckoo-a-template-engine-in-Python
+# Cuckoo-a-lightweight-template-engine-in-Python
 
 A lightweight template engine in Python
 
